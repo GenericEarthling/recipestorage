@@ -13,6 +13,8 @@ import com.atomic.recipestorage.domain.Ingredient;
 import com.atomic.recipestorage.domain.IngredientRepository;
 import com.atomic.recipestorage.domain.Recipe;
 import com.atomic.recipestorage.domain.RecipeRepository;
+import com.atomic.recipestorage.domain.User;
+import com.atomic.recipestorage.domain.UserRepository;
 
 @SpringBootApplication
 public class RecipeStorageApplication {
@@ -22,6 +24,9 @@ public class RecipeStorageApplication {
 	
 	@Autowired
 	private IngredientRepository ingredientRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(RecipeStorageApplication.class, args);
@@ -65,6 +70,12 @@ public class RecipeStorageApplication {
 			System.out.println(pieRecipe.toString());
 			System.out.println(cakeRecipe.toString());
 			
+			// USERNAME: user PASSWORD: user
+			userRepository.save(new User("user", 
+					"$2a$04$1.YhMIgNX/8TkCKGFUONWO1waedKhQ5KrnB30f10Q01QKqmzLf.Zi", "USER"));
+			// USERNAME: admin PASSWORD: admin		
+			userRepository.save(new User("admin",
+					"$2a$04$KNLUwOWHVQZVpXyMBNc7JOzbLiBjv9Tk9bP7KNcPI12ICuvzXQQKG", "ADMIN"));
 		};   
 	} 
 }
