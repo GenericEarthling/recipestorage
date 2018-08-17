@@ -1,12 +1,20 @@
 package com.atomic.recipestorage;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.atomic.recipestorage.service.UserDetailServiceImpl;
 
@@ -16,35 +24,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private UserDetailServiceImpl userDetailsService;
-	
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		// TODO
+
+		http.csrf().disable().cors().and().authorizeRequests()
+			.antMatchers(HttpMethod.POST, "/login")
+			.permitAll().and()
+			.addFilterBefore( new LoginFilter("/login", authenticationManager() ), 
+					UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore( new AuthenticationFilter(), 
+					UsernamePasswordAuthenticationFilter.class );
+			
+	}	
+
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOrigins(Arrays.asList("*"));
+		config.setAllowedMethods(Arrays.asList("*"));
+		config.setAllowedHeaders(Arrays.asList("*"));
+		config.setAllowCredentials(true);
+		config.applyPermitDefaultValues();
+		source.registerCorsConfiguration("/**", config);
+		return source;
 	}
-	
-	// enable users in the database and define a password hashing algorithm
-	// this uses the BCrypt algorithm using Spring Security class
+
 	@Autowired
 	protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService)
 			.passwordEncoder(new BCryptPasswordEncoder());
 	}
-
-/*	// ********** DEVELOPMENT PHASE ONLY *************
-	// add in-memory users to the app. It will create a user with 
-	//     user: user & password: password.
-	// afterwards, CONVERT TO DB *********************
-	@Bean
-	@Override
-	public UserDetailsService userDetailsService () {
-		UserDetails user = 
-				User.withDefaultPasswordEncoder()
-					.username("user")
-					.password("password")
-					.roles("USER")
-					.build();
-		return new InMemoryUserDetailsManager();
-		
-	}
-*/	
+	
 }

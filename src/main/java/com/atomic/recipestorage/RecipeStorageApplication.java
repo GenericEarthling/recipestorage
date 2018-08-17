@@ -71,11 +71,9 @@ public class RecipeStorageApplication {
 			System.out.println(cakeRecipe.toString());
 			
 			// USERNAME: user PASSWORD: user
-			userRepository.save(new User("user", 
-					"$2a$04$1.YhMIgNX/8TkCKGFUONWO1waedKhQ5KrnB30f10Q01QKqmzLf.Zi", "USER"));
+			userRepository.save(new User("user", "$2a$04$1.YhMIgNX/8TkCKGFUONWO1waedKhQ5KrnB30fl0Q01QKqmzLf.Zi", "USER"));
 			// USERNAME: admin PASSWORD: admin		
-			userRepository.save(new User("admin",
-					"$2a$04$KNLUwOWHVQZVpXyMBNc7JOzbLiBjv9Tk9bP7KNcPI12ICuvzXQQKG", "ADMIN"));
+			userRepository.save(new User("admin", "$2a$04$KNLUwOWHVQZVpXyMBNc7JOzbLiBjb9Tk9bP7KNcPI12ICuvzXQQKG", "ADMIN"));			
 		};   
 	} 
 }
